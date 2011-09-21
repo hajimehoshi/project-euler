@@ -4,7 +4,7 @@ main = putStrLn $ show result
 result :: Integer
 result = maximum nums
   where
-    nums = [n | x <- [100..999], y <- [y' | y' <- [100..999], x <= y'], let n = x * y, palindrome n]
+    nums = [n | x <- [100..999], y <- [x..999], let n = x * y, palindrome n]
 
 palindrome :: Integer -> Bool
 palindrome num = palindrome' $ split num
