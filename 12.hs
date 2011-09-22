@@ -4,13 +4,13 @@ main :: IO ()
 main = putStrLn $ show result
 
 result :: Integer
-result = head $ dropWhile ((<500) . nDivisor) triangleNumbers
+result = head $ dropWhile ((<500) . nDivisors) triangleNumbers
 
 triangleNumbers :: [Integer]
 triangleNumbers = scanl1 (+) [1..]
                
-nDivisor :: Integer -> Integer
-nDivisor num = product $ map ((+1) . toInteger . length) $ group $ factors num
+nDivisors :: Integer -> Integer
+nDivisors num = product $ map ((+1) . toInteger . length) $ group $ factors num
 
 factors :: Integer -> [Integer]
 factors num = factors' num psuedoPrimes
