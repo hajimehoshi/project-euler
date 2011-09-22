@@ -1,60 +1,37 @@
-import Data.List
+import Control.Arrow
+import Data.Array
+
+type Plane = Array (Int, Int) Integer
 
 main :: IO ()
 main = putStrLn $ show result
 
 result :: Integer
-result = maximum $
-         (horizontalProds nums) ++
-         (verticalProds nums) ++
-         (diagonallyProds nums)
+result = maximum $ map product $ tuples $ numberArr numberStr
+
+tuples :: Plane -> [[Integer]]
+tuples ary = map (map (ary!)) $ tupleIndexes ary
   where
-    nums = numbers numberStr
-    
-prodNum :: Int
-prodNum = 4
+    tupleIndexes :: Plane -> [[(Int, Int)]]
+    tupleIndexes ary' = [ixs |
+                         ix <- indexes ary',
+                         sense <- senses,
+                         let ixs = take 4 $ iterate sense ix,
+                         all (inArray ary') ixs]
+          
+indexes :: Plane -> [(Int, Int)]
+indexes = range . bounds
 
-horizontalProds :: Num a => [[a]] -> [a]
-horizontalProds = concat . map lineToProds
-  where
-    lineToProds line = map product $ neiborGroups line prodNum
+inArray :: Plane -> (Int, Int) -> Bool
+inArray ary ix = inRange (bounds ary) ix
 
-verticalProds :: Num a => [[a]] -> [a]
-verticalProds = horizontalProds . transpose
+-- Why is it named 'sense'?
+-- http://www.haskell.org/haskellwiki/Euler_problems/11_to_20
+senses :: [(Int, Int) -> (Int, Int)]
+senses = [(+1) *** id, (+1) *** (+1), id *** (+1), (+1) *** (\n -> n - 1)]
 
-diagonallyProds :: Num a => [[a]] -> [a]
-diagonallyProds lines = undefined
-  where
-    width = width2DArray lines
-    indexGroups = [indexes |
-                   startX <- [0..(width - prodNum - 1)]
-                   indexes <- [(x, y) |
-                               num <- [0..(prodNum - 1)],
-                               let x = startX + num,
-                               let y = x]
-                  
-                        
-elem2DArray :: [[a]] -> (Int, Int) -> a
-elem2DArray arr (x, y) = (arr !! y) !! x
-
-width2DArray :: [[a]] -> Int
-width2DArray arr = length (arr !! 0)
-
-height2DArray :: [[a]] -> Int
-height2DArray = length
-
-neiborGroups :: [a] -> Integer -> [[a]]
-neiborGroups xs num = map (\xs' -> heads xs' num) $
-                      filter (\xs' -> (toInteger $ length xs') >= num) $
-                      tails xs
-
-heads :: [a] -> Integer -> [a]
-heads _      0   = []
-heads []     _   = error "empty list"
-heads (x:xs) num = x : heads xs (num - 1)
-
-numbers :: String -> [[Integer]]
-numbers = map (map read . words) . lines
+numberArr :: String -> Plane
+numberArr = listArray ((0, 0), (19, 19)) . map read . words
 
 numberStr :: String
 numberStr = "08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08\n\
