@@ -2,9 +2,9 @@ main :: IO ()
 main = putStrLn $ show result
 
 result :: Integer
-result = sum $ map (toInteger . length . notSpaceOrHyphen . english) [1..1000]
+result = sum $ map (toInteger . length . removeSpaceAndHyphen . english) [1..1000]
   where
-    notSpaceOrHyphen = filter (\x -> x /= ' ' && x /= '-')
+    removeSpaceAndHyphen = filter (\x -> x /= ' ' && x /= '-')
 
 english :: Integer -> String
 english 0    = ""
