@@ -8,5 +8,4 @@ result = sum $ map (toInteger . digitToInt) $ show $ factorial 100
 
 factorial :: Integer -> Integer
 factorial 0 = 1
-factorial 1 = 1
-factorial n = n * (factorial (n-1))
+factorial n = product [1..n]
